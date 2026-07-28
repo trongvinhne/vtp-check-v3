@@ -2,7 +2,7 @@
 // VTP Check V3
 // app.js
 // ============================
-
+alert("app.js đã được tải");
 const videoInput = document.getElementById("videoInput");
 const video = document.getElementById("video");
 const scanBtn = document.getElementById("scanBtn");
