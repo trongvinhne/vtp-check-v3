@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0">
+
+    <title>VTP Check V3</title>
+
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="stylesheet" href="style.css">
+
+    <meta name="theme-color" content="#0f172a">
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+
+        <h1>📦 VTP Check V3</h1>
+
+        <p>
+            Đọc mã vận đơn từ video
+        </p>
+
+    </header>
+
+
+    <section class="card">
+
+        <input
+            type="file"
+            id="videoInput"
+            accept="video/*">
+
+        <video
+            id="video"
+            controls
+            playsinline>
+        </video>
+
+    </section>
+
+
+
+    <section class="card">
+
+        <button id="scanBtn">
+
+            Bắt đầu quét
+
+        </button>
+
+        <div class="progress">
+
+            <div
+                id="progressBar"
+                class="progress-bar">
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <section class="card">
+
+        <h2>
+
+            Danh sách mã
+
+        </h2>
+
+        <textarea
+            id="result"
+            placeholder="Chưa có dữ liệu..."
+            readonly>
+        </textarea>
+
+    </section>
+
+
+
+    <section class="card buttons">
+
+        <button id="qrBtn">
+
+            Tạo QR
+
+        </button>
+
+        <button id="zipBtn">
+
+            Xuất ZIP
+
+        </button>
+
+    </section>
+
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
