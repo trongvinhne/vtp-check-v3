@@ -1,27 +1,120 @@
-// =========================================
+// ======================================
+// VTP Check V3
 // video.js
-// =========================================
+// ======================================
 
-export async function prepareFrames(video, progress){
+const VideoEngine = {
 
-    await new Promise(r=>setTimeout(r,300));
+    fps: 5,
 
-    const frames=[];
+    async extract(video, progress) {
 
-    const total=20;
+        if (!video.src) {
 
-    for(let i=1;i<=total;i++){
+            alert("Chưa chọn video");
 
-        await new Promise(r=>setTimeout(r,30));
+            return [];
 
-        progress(i,total);
+        }
 
-        frames.push({
-            index:i
+        await this.waitReady(video);
+
+        const duration = video.duration;
+
+        const canvas = document.createElement("canvas");
+
+        canvas.width = video.videoWidth;
+
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext("2d");
+
+        const frames = [];
+
+        const step = 1 / this.fps;
+
+        let current = 0;
+
+        let total = Math.ceil(duration / step);
+
+        let index = 0;
+
+        while (current < duration) {
+
+            await this.seek(video, current);
+
+            ctx.drawImage(
+                video,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            frames.push({
+
+                time: current,
+
+                image: canvas.toDataURL(
+                    "image/jpeg",
+                    0.85
+                )
+
+            });
+
+            index++;
+
+            if (progress) {
+
+                progress(
+                    Math.floor(index / total * 100)
+                );
+
+            }
+
+            current += step;
+
+        }
+
+        return frames;
+
+    },
+        waitReady(video){
+
+        return new Promise(resolve=>{
+
+            if(video.readyState>=1){
+
+                resolve();
+
+                return;
+
+            }
+
+            video.onloadedmetadata=()=>{
+
+                resolve();
+
+            };
+
+        });
+
+    },
+
+    seek(video,time){
+
+        return new Promise(resolve=>{
+
+            video.currentTime=time;
+
+            video.onseeked=()=>{
+
+                resolve();
+
+            };
+
         });
 
     }
 
-    return frames;
-
-}
+};

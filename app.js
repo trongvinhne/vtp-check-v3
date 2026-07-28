@@ -1,150 +1,109 @@
-// =========================================
+// ======================================
 // VTP Check V3
 // app.js
-// =========================================
+// ======================================
 
-import { prepareFrames } from "./video.js";
+const App = {
 
-const $ = (id) => document.getElementById(id);
+    video:null,
 
-const ui = {
-    videoInput: $("videoInput"),
-    video: $("video"),
-    scanBtn: $("scanBtn"),
-    result: $("result"),
-    progressBar: $("progressBar"),
-    qrBtn: $("qrBtn"),
-    zipBtn: $("zipBtn")
-};
+    input:null,
 
-const state = {
-    file: null,
-    frames: [],
-    codes: [],
-    busy: false
-};
+    scanBtn:null,
 
-window.addEventListener("error", (e) => {
-    alert(
-        "Lỗi:\n" +
-        e.message
-    );
-});
+    result:null,
 
-init();
+    progress:null,
 
-function init() {
+    qrBtn:null,
 
-    ui.videoInput.addEventListener(
-        "change",
-        onVideoSelected
-    );
+    zipBtn:null,
 
-    ui.scanBtn.addEventListener(
-        "click",
-        onScan
-    );
+    frames:[],
 
-}
+    init(){
 
-async function onVideoSelected(e) {
+        this.video=document.getElementById("video");
 
-    const file = e.target.files[0];
+        this.input=document.getElementById("videoInput");
 
-    if (!file) return;
+        this.scanBtn=document.getElementById("scanBtn");
 
-    state.file = file;
+        this.result=document.getElementById("result");
 
-    ui.video.src =
-        URL.createObjectURL(file);
+        this.progress=document.getElementById("progressBar");
 
-    ui.result.value =
+        this.qrBtn=document.getElementById("qrBtn");
+
+        this.zipBtn=document.getElementById("zipBtn");
+
+        this.input.addEventListener(
+            "change",
+            this.selectVideo.bind(this)
+        );
+
+        this.scanBtn.addEventListener(
+            "click",
+            this.scan.bind(this)
+        );
+
+    },
+
+    selectVideo(e){
+
+        const file=e.target.files[0];
+
+        if(!file){
+
+            return;
+
+        }
+
+        this.video.src=
+            URL.createObjectURL(file);
+
+        this.result.value=
+
 `✔ Đã chọn video
 
 Tên:
+
 ${file.name}
 
 Dung lượng:
-${(file.size / 1024 / 1024).toFixed(2)} MB`;
 
-}
-// =========================================
-// Scan
-// =========================================
+${(file.size/1024/1024).toFixed(2)} MB`;
 
-async function onScan() {
+    },
+        async scan(){
 
-    if (state.busy) return;
+        this.result.value+="\n\nĐang chuẩn bị...";
 
-    if (!state.file) {
+        this.progress.style.width="5%";
 
-        alert("Hãy chọn video trước.");
+        const frames=
+            await VideoEngine.extract(
+                this.video,
+                p=>{
 
-        return;
+                    this.progress.style.width=
+                    p+"%";
 
-    }
+                }
+            );
 
-    state.busy = true;
+        this.frames=frames;
 
-    ui.scanBtn.disabled = true;
+        this.result.value+=
 
-    ui.scanBtn.textContent = "Đang xử lý...";
-
-    setProgress(5);
-
-    ui.result.value += "\n\n⏳ Đang đọc video...";
-
-    try {
-
-        state.frames = await prepareFrames(
-            ui.video,
-            updateProgress
-        );
-
-        ui.result.value +=
-`\n\n✅ Đã lấy ${state.frames.length} frame`;
-
-        setProgress(100);
-
-    } catch (err) {
-
-        alert(err.message);
-
-    } finally {
-
-        state.busy = false;
-
-        ui.scanBtn.disabled = false;
-
-        ui.scanBtn.textContent = "Bắt đầu quét";
+`\n\nĐã lấy ${frames.length} frame`;
 
     }
 
-}
-// =========================================
-// Progress
-// =========================================
+};
 
-function setProgress(percent){
+window.onload=()=>{
 
-    ui.progressBar.style.width =
-        percent + "%";
+    App.init();
 
-}
-
-function updateProgress(current,total){
-
-    if(total===0){
-
-        setProgress(0);
-
-        return;
-
-    }
-
-    const percent =
-        Math.floor(current/total*100);
-
-    setProgress(percent);
-
-}
+};
