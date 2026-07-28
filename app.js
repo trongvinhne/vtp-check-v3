@@ -3,6 +3,13 @@
 // app.js
 // ============================
 
+window.onerror = function (message, source, line, col, error) {
+    alert(
+        "Lỗi:\n" +
+        message +
+        "\nDòng: " + line
+    );
+};
 const videoInput = document.getElementById("videoInput");
 const video = document.getElementById("video");
 
