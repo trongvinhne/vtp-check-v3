@@ -108,6 +108,3 @@ Sẵn sàng chuyển sang OCR.`;
     },40);
 
 }
-<script async src="https://docs.opencv.org/4.x/opencv.js"></script>
-<script src="video.js"></script>
-<script src="app.js"></script>
