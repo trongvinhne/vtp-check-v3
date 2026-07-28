@@ -1,25 +1,27 @@
-// ============================
+// =========================================
 // video.js
-// ============================
+// =========================================
 
-async function prepareFrames(){
+export async function prepareFrames(video, progress){
 
-    return new Promise((resolve)=>{
+    await new Promise(r=>setTimeout(r,300));
 
-        if(!video.videoWidth){
+    const frames=[];
 
-            video.onloadedmetadata=()=>{
+    const total=20;
 
-                resolve([]);
+    for(let i=1;i<=total;i++){
 
-            };
+        await new Promise(r=>setTimeout(r,30));
 
-            return;
+        progress(i,total);
 
-        }
+        frames.push({
+            index:i
+        });
 
-        resolve([]);
+    }
 
-    });
+    return frames;
 
 }
