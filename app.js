@@ -3,108 +3,66 @@
 // app.js
 // ============================
 
-window.onerror = function (message, source, line, col, error) {
-    alert(
-        "Lỗi:\n" +
-        message +
-        "\nDòng: " + line
-    );
-};
 const videoInput = document.getElementById("videoInput");
 const video = document.getElementById("video");
-
 const scanBtn = document.getElementById("scanBtn");
-
 const result = document.getElementById("result");
-
 const progressBar = document.getElementById("progressBar");
 
 let selectedVideo = null;
 
-videoInput.addEventListener("change", loadVideo);
+window.onerror = function (message, source, line) {
+    alert("Lỗi:\n" + message + "\nDòng: " + line);
+};
 
+videoInput.addEventListener("change", loadVideo);
 scanBtn.addEventListener("click", startScan);
 
-function loadVideo(e){
-
+function loadVideo(e) {
     const file = e.target.files[0];
 
-    if(!file){
-
-        return;
-
-    }
+    if (!file) return;
 
     selectedVideo = file;
 
-    const url = URL.createObjectURL(file);
-
-    video.src = url;
-
-    video.load();
+    video.src = URL.createObjectURL(file);
 
     result.value =
 `✔ Đã chọn video
 
-Tên:
-${file.name}
+Tên: ${file.name}
 
-Dung lượng:
-${(file.size/1024/1024).toFixed(2)} MB`;
-
+Dung lượng: ${(file.size/1024/1024).toFixed(2)} MB`;
 }
-function startScan(){
 
-    if(!selectedVideo){
+async function startScan() {
 
-        alert("Hãy chọn video.");
-
+    if (!selectedVideo) {
+        alert("Hãy chọn video");
         return;
-
     }
 
     scanBtn.disabled = true;
+    scanBtn.innerText = "Đang xử lý...";
 
-    scanBtn.innerText = "Đang chuẩn bị...";
+    progressBar.style.width = "10%";
 
-prepareFrames().then(frames=>{
+    try {
 
-    progressBar.style.width="100%";
+        const frames = await prepareFrames();
 
-    result.value +=
-`\n\nĐã trích xuất ${frames.length} frame.\nSẵn sàng OCR.`;
+        progressBar.style.width = "100%";
 
-});
+        result.value +=
+`\n\n✔ Đã lấy ${frames.length} frame`;
 
-}
-function fakeProgress(){
+    } catch(err){
 
-    let p = 0;
+        alert(err.message);
 
-    progressBar.style.width = "0%";
+    }
 
-    const timer = setInterval(()=>{
-
-        p += 2;
-
-        progressBar.style.width = p + "%";
-
-        if(p>=100){
-
-            clearInterval(timer);
-
-            scanBtn.disabled = false;
-
-            scanBtn.innerText = "Bắt đầu quét";
-
-            result.value +=
-
-`\n\n✔ Module Video hoạt động.
-
-Sẵn sàng chuyển sang OCR.`;
-
-        }
-
-    },40);
+    scanBtn.disabled = false;
+    scanBtn.innerText = "Bắt đầu quét";
 
 }
